@@ -1,4 +1,3 @@
-
 package VSEGame
 {
 	import away3d.cameras.*;
