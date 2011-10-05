@@ -20,19 +20,20 @@ package VSEGame
 	public class Main extends Sprite
 	{
 		//protected var mTruckLoader:TruckLoader;		
-		protected var mTruckSteering:TruckSteering;
+		//protected var mTruckSteering:TruckSteering;
+		
+		protected var mStartGame:StartGame;
 		
 		//protected var mTrailerLoader:TrailerLoader;
 		//protected var mTruckSteering:TruckSteering;
 		
-		//protected var mMenuManage:MenuManage;
+		protected var mMenuManage:MenuManage;
 		
 		public function Main()
 		{
-			mTruckSteering = new TruckSteering();
-			stage.addChild(mTruckSteering);
-			//mTruckLoader = new TruckLoader();
-			//stage.addChild(mTruckLoader);
+			
+			mStartGame = new StartGame();
+			stage.addChild(mStartGame);
 
 			//mTrailerLoader = new TrailerLoader();
 			//stage.addChild(mTrailerLoader);
@@ -41,6 +42,7 @@ package VSEGame
 			
 			//mMenuManage = new MenuManage();
 			//stage.addChild(mMenuManage);
+			
 			//var mMainMenu:MainMenu = new MainMenu();
 			//stage.addChild(mMainMenu);
 			

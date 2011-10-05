@@ -59,7 +59,7 @@ package VSEGame
 			trace(mSelectedMenu);
 		}
 		
-		/*protected function keyEventUp(event:KeyboardEvent):void
+		protected function keyEventUp(event:KeyboardEvent):void
 		{
 			log.text = "Key up event";
 			mIsKeyPressed = false;
@@ -106,7 +106,7 @@ package VSEGame
 					}
 				}
 			}
-		}*/
+		}
 		
 		/*
 		protected function TimerFunc(ev : TimerEvent) : void

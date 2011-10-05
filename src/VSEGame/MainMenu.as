@@ -243,7 +243,7 @@ package VSEGame
 					case Keyboard.ENTER:
 						trace("PRESSING ENTER");
 						if (mMenuSelection == 0)
-							Die(0);
+							Die(0); trace("Selection 0");
 						if (mMenuSelection == 1)
 								Die(1);
 						if (mMenuSelection == 2)
@@ -259,6 +259,7 @@ package VSEGame
 		
 		public function Die(newSelectedMenu:int):void 
 		{
+			trace("PRESSING STUFF");
 			removeEventListener(KeyboardEvent.KEY_DOWN, keyEventDown);
 			removeEventListener(KeyboardEvent.KEY_UP, keyEventUp);
 			//parent.mSelectedMenu = newSelectedMenu;
