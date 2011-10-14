@@ -9,6 +9,7 @@ package VSEGame
 	import away3d.core.utils.*;
 	import away3d.events.*;
 	import away3d.loaders.*;
+	import away3d.loaders.AWData;
 	import away3d.loaders.Ase;
 	import away3d.loaders.Collada;
 	import away3d.loaders.Loader3D;
@@ -16,7 +17,6 @@ package VSEGame
 	import away3d.loaders.utils.*;
 	import away3d.materials.*;
 	import away3d.primitives.*;
-	import away3d.primitives.Cube;
 	
 	import flash.display.*;
 	import flash.events.*;
@@ -24,41 +24,19 @@ package VSEGame
 	import flash.ui.Keyboard;
 	import flash.utils.*;
 	
+	import mx.core.BitmapAsset;
+	
 	public class GameLoader extends Sprite
 	{
-		public var mTruck:Object3D = Obj.load("data/Truck.OBJ");
+		[Embed(source="data/Truck.png")]
+		private var TruckBitmap:Class;
+		
+		public var mTruck:Object3D = Obj.load("data/Truck.obj",{material:TruckBitmap,scaling:1,screenZOffset: 10});
+		
+		public var mLevel:Object3D = Obj.load("data/Level_Test.obj", {scaling:1,x:0,y:0,z:0,rotationX:0,rotationY:0,rotationZ:0,screenZOffset: -11});
 		
 		public function GameLoader()
 		{
-			
-			addEventListener(Event.ADDED_TO_STAGE, InitPlayer);
-			addEventListener(Event.ADDED_TO_STAGE, InitTrailer);
-			addEventListener(Event.ADDED_TO_STAGE, InitWorld);
-		}
-		
-		protected function InitPlayer(ev:Event)
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, InitPlayer);
-			
-			mTruck.y = 0;
-			mTruck.x = 0;
-			mTruck.z = 0;
-			mTruck.rotationX = 0;
-			mTruck.rotationY = 180;
-			mTruck.rotationZ = 0;
-			mTruck.scale(6);
-
-		}
-		protected function InitTrailer(ev:Event)
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, InitTrailer);
-			
-			
-		}
-		protected function InitWorld(ev:Event)
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, InitWorld);
-			
 			
 		}
 	}

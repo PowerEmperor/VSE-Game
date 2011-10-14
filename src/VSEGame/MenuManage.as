@@ -18,163 +18,82 @@ package VSEGame
 
 	public class MenuManage extends Sprite
 	{
-		protected var mMainMenu:MainMenu;
-		protected var mHowToMenu:HowToMenu;
+		protected var mMenu:Menu;
+		protected var mGame:Game;
 		
-		//View objects
-		protected var mCamera:Camera3D;
-		protected var mView:View3D;
-		protected var mTimer:Timer;
+		protected var mGameRunningCheck:Boolean;
+		protected var mMenuRunningCheck:Boolean;
+		
 		protected var mIsKeyPressed:Boolean;
 		
-		public var mSelectedMenu:Number;
-		
-		public var log:TextField;
+		//public var log:TextField;
 		
 		public function MenuManage()
-		{			
-			mTimer = new Timer(1);
-			//mTimer.addEventListener(TimerEvent.TIMER,TimerFunc);
-			mTimer.start();
+		{
 			mIsKeyPressed = false;
 			
+			mMenu = new Menu();
+			mGame = new Game();
+			
+			addChild(mMenu);
+
 			addEventListener(Event.ADDED_TO_STAGE, Init);
 		}
 		
 		protected function Init(ev : Event) : void
 		{
-			removeEventListener(Event.ADDED_TO_STAGE, Init);
-			
-			log = new TextField();
-			log.width = 500;
-			log.height = 200;
-			log.x=0;
-			log.y=0;
-			stage.addChild(log);
-			log.text = "log file added to stage";
-			
-			//addEventListener(KeyboardEvent.KEY_UP, keyEventUp);
-			//addEventListener(KeyboardEvent.KEY_DOWN, knopje);
-			selectedMenu = 0; // START MAIN MENU
-			trace(mSelectedMenu);
+			stage.addEventListener(KeyboardEvent.KEY_UP, keyEventIngameUp);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEventIngameDown);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
-		protected function keyEventUp(event:KeyboardEvent):void
+		protected function onEnterFrame(ev : Event) : void
 		{
-			log.text = "Key up event";
+			
+			// Go To Game
+			if (mMenu.mGlobalMenuSelection == 1)
+			{				
+				
+				addChild(mGame);
+				
+				mGameRunningCheck = true;
+
+				removeChild(mMenu);
+				
+				mMenu.mGlobalMenuSelection = 0;
+			}
+			
+			// Go To Ingame Menu
+			if (mMenu.mGlobalMenuSelection == 3 && mGameRunningCheck == true)
+			{
+				
+				addChild(mMenu);
+				
+				mGameRunningCheck = false;
+
+				removeChild(mGame);
+				
+				mMenu.mGlobalMenuSelection = 0;
+			}
+			
+		}
+		
+		protected function keyEventIngameUp(event:KeyboardEvent) : void
+		{
 			mIsKeyPressed = false;
 		}
 		
-		protected function knopje(ev:KeyboardEvent):void
+		protected function keyEventIngameDown (event:KeyboardEvent) : void
 		{
-			log.text ="Key down event";
 			if(mIsKeyPressed == false)
 			{
-				if(stage.contains(mMainMenu) && ev.keyCode == Keyboard.ENTER)
+				if(event.keyCode == Keyboard.ESCAPE && mGameRunningCheck == true)
 				{
+					trace('ESCAPE');
+					mMenu.mGlobalMenuSelection = 3;
 					mIsKeyPressed = true;
-					switch(mMainMenu.mMenuSelection)
-					{
-						case 0:
-							break;
-						case 1:
-							if(stage.contains(mMainMenu))
-							{
-								stage.removeChild(mMainMenu);
-							}
-							stage.addChild(mHowToMenu);
-							break;
-						case 2:
-							break;
-						case 3:
-							break;
-					}
-				}
-			
-				if(stage.contains(mHowToMenu) && ev.keyCode == Keyboard.ENTER)
-				{
-					mIsKeyPressed = true;
-					switch(mHowToMenu.mMenuSelection)
-					{
-						case 0:
-							if(stage.contains(mHowToMenu))
-							{
-								stage.removeChild(mHowToMenu);
-							}							
-							stage.addChild(mMainMenu);
-							break;
-					}
 				}
 			}
-		}
-		
-		/*
-		protected function TimerFunc(ev : TimerEvent) : void
-		{
-			//mView.render();
-			if(mMainMenu.mMenuFlag == true && stage.contains(mMainMenu))
-			{				
-				switch(mMainMenu.mMenuSelection)
-				{
-					case 0:
-						break;
-					case 1:
-						if(stage.contains(mMainMenu))
-						{
-							mMainMenu.removeEventListener(KeyboardEvent.KEY_DOWN,mMainMenu.keyEventDown);
-							stage.removeChild(mMainMenu);
-							
-						}
-						stage.addChild(mHowToMenu);
-						mHowToMenu.addEventListener(KeyboardEvent.KEY_DOWN,mHowToMenu.keyEventDown);
-						break;
-					case 2:
-						break;
-					case 3:
-						break;
-				}
-			}
-			else if(mHowToMenu.mMenuFlag == true && stage.contains(mHowToMenu))
-			{
-				switch(mHowToMenu.mMenuSelection)
-				{
-					case 0:
-						if(stage.contains(mHowToMenu))
-						{
-							stage.removeChild(mHowToMenu);
-							mHowToMenu.removeEventListener(KeyboardEvent.KEY_DOWN,mHowToMenu.keyEventDown);
-						}							
-						stage.addChild(mMainMenu);
-						mMainMenu.addEventListener(KeyboardEvent.KEY_DOWN,mMainMenu.keyEventDown);
-						break;
-				}
-			}
-		}
-		*/
-		
-		public function set selectedMenu(val:Number):void
-		{
-			trace("setter")
-			mSelectedMenu = val;
-			
-			switch(mSelectedMenu)
-			{
-				case 0: // MAIN MENU
-					mMainMenu = new MainMenu(mSelectedMenu);
-					addChild(mMainMenu);
-					trace('JIPPIE!');
-					break;
-				case 1:
-					mHowToMenu = new HowToMenu();
-					addChild(mHowToMenu);
-					break;
-			}
-		}
-		
-		public function get selectedMenu():Number
-		{
-			return mSelectedMenu;
-		}
-		
+		}		
 	}
 }
