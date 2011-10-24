@@ -52,8 +52,7 @@ package VSEGame
 			
 			// Go To Game
 			if (mMenu.mGlobalMenuSelection == 1)
-			{				
-				
+			{					
 				addChild(mGame);
 				
 				mGameRunningCheck = true;

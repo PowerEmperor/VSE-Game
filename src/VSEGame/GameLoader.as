@@ -31,9 +31,9 @@ package VSEGame
 		[Embed(source="data/Truck.png")]
 		private var TruckBitmap:Class;
 		
-		public var mTruck:Object3D = Obj.load("data/Truck.obj",{material:TruckBitmap,scaling:1,screenZOffset: 10});
+		public var mTruck:Object3D = Obj.load("data/Truck.obj",{material:TruckBitmap,scaling:1,screenZOffset: 10, bothsides: false});
 		
-		public var mLevel:Object3D = Obj.load("data/Level_Test.obj", {scaling:1,x:0,y:0,z:0,rotationX:0,rotationY:0,rotationZ:0,screenZOffset: -11});
+		public var mLevel:Object3D = Obj.load("data/Level_Test.obj", {scaling:1,x:0,y:0,z:0,rotationX:0,rotationY:0,rotationZ:0,screenZOffset: -11, bothsides: false});
 		
 		public function GameLoader()
 		{

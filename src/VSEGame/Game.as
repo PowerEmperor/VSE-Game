@@ -71,9 +71,17 @@ package VSEGame
 			mScene = mView.scene;
 			mCamera = mView.camera;
 			
+			Init();
+			
+			addEventListener(Event.ADDED_TO_STAGE, GameCreate);
+			addEventListener(Event.REMOVED_FROM_STAGE, GameDestroy);
+		}
+		
+		public function Init() : void
+		{
 			mTruckContainer.addChild(mGameLoader.mTruck);
 			mLevelContainer.addChild(mGameLoader.mLevel);
-	
+			
 			//mScene.addChild(mGameLoader.mLevel);
 			mScene.addChild(mTruckContainer);
 			mScene.addChild(mLevelContainer);
@@ -86,17 +94,9 @@ package VSEGame
 			mTruckContainer.y = 0;
 			mTruckContainer.z = -168;
 			mTruckContainer.rotationY = 90;
+			mTruckContainer.scale(3);
 			
-			addEventListener(Event.ADDED_TO_STAGE, Init);
-		}
-		
-		public function Init(ev : Event) : void
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, Init);
-			
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener( KeyboardEvent.KEY_DOWN, mKeyDownHandler );
-			stage.addEventListener( KeyboardEvent.KEY_UP, mKeyUpHandler );
+			mLevelContainer.scale(3);
 		}
 		
 		private function HandlePlayer() : void
@@ -279,18 +279,18 @@ package VSEGame
 			
 		}
 		
-		public function GameDestroy() : void
+		public function GameDestroy(ev : Event) : void
 		{
 			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.removeEventListener( KeyboardEvent.KEY_DOWN, mKeyDownHandler);
 			stage.removeEventListener( KeyboardEvent.KEY_UP, mKeyUpHandler );
 		}
 		
-		/*public function GameCreate() : void
+		public function GameCreate(ev : Event) : void
 		{
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, mKeyDownHandler);
 			stage.addEventListener(KeyboardEvent.KEY_UP, mKeyUpHandler );
-		}*/
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
 	}
 }
