@@ -65,7 +65,7 @@ package VSEGame
 			mTruckContainer = new ObjectContainer3D();
 			mLevelContainer = new ObjectContainer3D();
 			
-			mView = new View3D({x:320, y:240});
+			mView = new View3D({x:320, y:360});
 			addChild(mView);
 			
 			mScene = mView.scene;
@@ -94,9 +94,9 @@ package VSEGame
 			mTruckContainer.y = 0;
 			mTruckContainer.z = -168;
 			mTruckContainer.rotationY = 90;
-			mTruckContainer.scale(3);
+			mTruckContainer.scale(1);
 			
-			mLevelContainer.scale(3);
+			mLevelContainer.scale(1);
 		}
 		
 		private function HandlePlayer() : void
@@ -270,7 +270,7 @@ package VSEGame
 			mCamera.lookAt(mTruckContainer.position);
 			mCamera.x = mTruckContainer.x - ((5) * Math.sin(mTruckContainer.rotationY * Math.PI / 180));
 			mCamera.z = mTruckContainer.z - ((5) * Math.cos(mTruckContainer.rotationY * Math.PI / 180));
-			mCamera.y = 2;
+			mCamera.y = 1.5;
 			
 
 			//mCamera.lookAt(mGameLoader.mTruck.position);
@@ -285,7 +285,7 @@ package VSEGame
 			stage.removeEventListener( KeyboardEvent.KEY_DOWN, mKeyDownHandler);
 			stage.removeEventListener( KeyboardEvent.KEY_UP, mKeyUpHandler );
 		}
-		
+
 		public function GameCreate(ev : Event) : void
 		{
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, mKeyDownHandler);

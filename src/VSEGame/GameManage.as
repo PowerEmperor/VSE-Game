@@ -16,7 +16,7 @@ package VSEGame
 	
 	import wumedia.vector.*;
 
-	public class MenuManage extends Sprite
+	public class GameManage extends Sprite
 	{
 		protected var mMenu:Menu;
 		protected var mGame:Game;
@@ -28,7 +28,7 @@ package VSEGame
 		
 		//public var log:TextField;
 		
-		public function MenuManage()
+		public function GameManage()
 		{
 			mIsKeyPressed = false;
 			
@@ -62,15 +62,32 @@ package VSEGame
 				mMenu.mGlobalMenuSelection = 0;
 			}
 			
+			// Go To Game from Pause.
+			if (mMenu.mGlobalMenuSelection == 2)
+			{					
+				//addChild(mGame);
+				mGame.GameCreate(ev);
+				
+				mGameRunningCheck = true;
+				
+				removeChild(mMenu);
+				
+				mMenu.mGlobalMenuSelection = 0;
+			}
+			
 			// Go To Ingame Menu
 			if (mMenu.mGlobalMenuSelection == 3 && mGameRunningCheck == true)
 			{
+				mMenu.mIngameMenu = true;
+				mMenu.MenuState();
 				
 				addChild(mMenu);
 				
 				mGameRunningCheck = false;
 
-				removeChild(mGame);
+				//removeChild(mGame);
+				
+				mGame.GameDestroy(ev);
 				
 				mMenu.mGlobalMenuSelection = 0;
 			}

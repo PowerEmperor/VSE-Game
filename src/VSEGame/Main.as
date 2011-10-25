@@ -14,13 +14,13 @@ package VSEGame
 	public class Main extends Sprite
 	{
 
-		protected var mMenuManage:MenuManage;
+		protected var mGameManage:GameManage;
 
 		public function Main()
 		{
 			
-			mMenuManage = new MenuManage();
-			stage.addChild(mMenuManage);
+			mGameManage = new GameManage();
+			stage.addChild(mGameManage);
 
 		}
 	}
