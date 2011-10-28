@@ -439,15 +439,19 @@ package VSEGame
 							MenuState();
 						}
 						
+						////////////////////////////////////////////////////////////
+						// End Game Goto Main Menu
 						if (mMenuSelection == 14)
 						{
-							// End Game Goto Main Menu
+							//mGlobalMenuSelection = 4;
 							
 							mRunGame = false;
 							mMainMenu = true;
 							mIngameMenu = false;
 							
 							mMenuSelection = 0;
+							
+							
 							
 							mKeyPressed = true;
 							

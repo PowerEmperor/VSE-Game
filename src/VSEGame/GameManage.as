@@ -49,11 +49,12 @@ package VSEGame
 		
 		protected function onEnterFrame(ev : Event) : void
 		{
-			
+			////////////////////////////////////////////////////////////
 			// Go To Game
 			if (mMenu.mGlobalMenuSelection == 1)
 			{					
 				addChild(mGame);
+				mGame.GameCreate(ev);
 				
 				mGameRunningCheck = true;
 
@@ -62,6 +63,7 @@ package VSEGame
 				mMenu.mGlobalMenuSelection = 0;
 			}
 			
+			////////////////////////////////////////////////////////////
 			// Go To Game from Pause.
 			if (mMenu.mGlobalMenuSelection == 2)
 			{					
@@ -75,6 +77,7 @@ package VSEGame
 				mMenu.mGlobalMenuSelection = 0;
 			}
 			
+			////////////////////////////////////////////////////////////
 			// Go To Ingame Menu
 			if (mMenu.mGlobalMenuSelection == 3 && mGameRunningCheck == true)
 			{
@@ -89,6 +92,14 @@ package VSEGame
 				
 				mGame.GameDestroy(ev);
 				
+				mMenu.mGlobalMenuSelection = 0;
+			}
+			
+			////////////////////////////////////////////////////////////
+			// Go To Main Menu and Reset the game
+			if (mMenu.mGlobalMenuSelection == 4 && mGameRunningCheck == true)
+			{
+				mGame.GameReset(ev);
 				mMenu.mGlobalMenuSelection = 0;
 			}
 			
