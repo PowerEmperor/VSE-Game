@@ -14,6 +14,7 @@ package VSEGame
 	import away3d.core.render.Renderer;
 	import away3d.core.utils.*;
 	import away3d.events.*;
+	import away3d.lights.*;  
 	import away3d.loaders.*;
 	import away3d.loaders.Ase;
 	import away3d.loaders.Collada;
@@ -33,30 +34,30 @@ package VSEGame
 	
 	public class Game extends Sprite
 	{
+		////////////////////////////////////////////////////////////
+		//This is Camera and View stuff.
+		////////////////////////////////////////////////////////////
 		
 		public var mView : View3D;
 		public var mScene:Scene3D;
 		public var mCamera:Camera3D;
 		
-		//protected var mCamera:Camera;
+		
+		
+		////////////////////////////////////////////////////////////
+		//These are the model holders.
+		
 		protected var mGameLoader:GameLoader;
-		
-		//public var mTruck:Sphere;
-		
 		public var mTruckContainer:ObjectContainer3D;
 		public var mLevelContainer:ObjectContainer3D;
 		
 		public var mRedBuildingContainer:ObjectContainer3D;
 		public var mBlueBuildingContainer:ObjectContainer3D;
 		
-		//public var mTruck:Object3D;
+		////////////////////////////////////////////////////////////
+		//This is for the Speed and Keyboard Control
 		
-		//public var mLevel:Object3D;
-		
-		private var topSpeed:Number = 0;
-		private var topSteer:Number = 0;
-		private var speed:Number = 10;
-		private var steer:Number = 0;
+		private var speed:Number = 0;
 		
 		private var mKeyRight:Boolean = false;
 		private var mKeyLeft:Boolean = false;
@@ -64,9 +65,8 @@ package VSEGame
 		private var mKeyReverse:Boolean = false;
 		private var mKeySpace:Boolean = false;
 		
-		private var keyPressed:Boolean = false;
-		
-		[Embed (source="data/vera.swf", mimeType="application/octet-stream")] private var mVera : Class;
+		////////////////////////////////////////////////////////////
+		//These are for Textfields.
 		
 		public var mSpeedMeter:TextField;
 		
@@ -74,12 +74,21 @@ package VSEGame
 		public var mShowPosZ:TextField;
 		
 		public var mTimer:TextField;
+		[Embed (source="data/vera.swf", mimeType="application/octet-stream")] private var mVera : Class;
+		
+		////////////////////////////////////////////////////////////
+		//These are for Test Collision Cubes.
 		
 		public var mPlayerCubeTest:Cube = new Cube();
 		public var mBuildingCubeTest:Cube = new Cube();
 		
+		
 		public function Game()
 		{
+			////////////////////////////////////////////////////////////
+			//These are the model holders.
+			////////////////////////////////////////////////////////////
+			
 			mGameLoader = new GameLoader();
 			
 			mTruckContainer = new ObjectContainer3D();
@@ -87,6 +96,9 @@ package VSEGame
 			
 			mRedBuildingContainer = new ObjectContainer3D();
 			mBlueBuildingContainer = new ObjectContainer3D();
+			
+			////////////////////////////////////////////////////////////
+			//View Creator.
 			
 			mView = new View3D({x:320, y:360});
 			addChild(mView);
@@ -119,6 +131,12 @@ package VSEGame
 			mScene.addChild(mPlayerCubeTest);
 			mScene.addChild(mBuildingCubeTest);
 			
+			mScene.addChild(mGameLoader.TestBorderCube);
+			mScene.addChild(mGameLoader.TestBorder2Cube);
+			mScene.addChild(mGameLoader.TestBorder3Cube);
+			mScene.addChild(mGameLoader.TestBorder4Cube);
+			mScene.addChild(mGameLoader.pillar);
+			
 			mScene.addChild(mRedBuildingContainer);
 			mScene.addChild(mBlueBuildingContainer);
 			
@@ -127,7 +145,8 @@ package VSEGame
 			mGameLoader.mPlayerLoader.z = mTruckContainer.z;
 			
 			//Start pos of the Player.	
-			mGameLoader.mBBPlayer.SetPosition(new b2Vec2(-150,0));
+			mGameLoader.mBBPlayer.SetPosition(new b2Vec2(158,30));
+			mGameLoader.mBBPlayer.SetAngle((Math.PI/2 * 3));
 			
 					
 			mTruckContainer.x = mGameLoader.mBBPlayer.GetPosition().x;
@@ -216,18 +235,10 @@ package VSEGame
 		}
 		
 		private function HandlePlayer() : void
-		{
-			//mTruckContainer.x += (speed * Math.sin(mTruckContainer.rotationY*(Math.PI/180)));
-			//mTruckContainer.z += (speed * Math.cos(mTruckContainer.rotationY*(Math.PI/180)));
-			
-			//mGameLoader.mPlayerRec.x = mTruckContainer.x;
-			//mGameLoader.mPlayerRec.y = mTruckContainer.z;
-			//mGameLoader.mBBPlayer.SetAngle(mTruckContainer.rotationY);
-			
+		{			
 			mTruckContainer.rotationY = mGameLoader.mBBPlayer.GetAngle() * (180/Math.PI) + 90;
 			
 			mTruckContainer.x = mGameLoader.mBBPlayer.GetPosition().x;
-			//mTruckContainer.y = mGameLoader.mBBPlayer.GetPosition().y;
 			mTruckContainer.z = mGameLoader.mBBPlayer.GetPosition().y;
 			
 			mRedBuildingContainer.x = mGameLoader.mBBRedBuilding.GetPosition().x
@@ -235,16 +246,6 @@ package VSEGame
 				
 			mBlueBuildingContainer.x = mGameLoader.mBBBlueBuilding.GetPosition().x
 			mBlueBuildingContainer.z = mGameLoader.mBBBlueBuilding.GetPosition().y
-				
-			/*mGameLoader.mRedBuildingRec.x = mRedBuildingContainer.x;
-			mGameLoader.mRedBuildingRec.y = mRedBuildingContainer.z;
-			
-			mGameLoader.mBlueBuildingRec.x = mBlueBuildingContainer.x;
-			mGameLoader.mBlueBuildingRec.y = mBlueBuildingContainer.z;*/
-			
-			//////////////////////////////////////////////////
-			//Test Code
-			//////////////////////////////////////////////////
 			
 			mPlayerCubeTest.x = mTruckContainer.x;
 			mPlayerCubeTest.y = mTruckContainer.y;
@@ -255,38 +256,6 @@ package VSEGame
 			mBuildingCubeTest.x = mGameLoader.mBBBlueBuilding.GetPosition().x;
 			mBuildingCubeTest.y = 0;
 			mBuildingCubeTest.z = mGameLoader.mBBBlueBuilding.GetPosition().y;
-			
-			//////////////////////////////////////////////////
-			//Stopping Code.
-			//Putting this inactive during the fix for "Finding a way to press multiple buttons". 
-			//////////////////////////////////////////////////
-			
-			/*if (keyForwardPressed == false)
-			{
-			if (speed > 0)
-			{
-			speed -= 0.05;
-			}
-			}
-			
-			if (keyReversePressed == false)
-			{
-			if (speed < 0)
-			{
-			speed += 0.05;
-			}
-			}*/
-			
-			//////////////////////////////////////////////////
-			//At this way the truck will stop.
-			
-			/*if (keyPressed == false)
-			{
-				if (speed > -0.4 && speed < 0.4)
-				{
-					speed = 0;	
-				}
-			}*/
 		}
 		
 		private function mKeyDownHandler(ev : KeyboardEvent) : void
@@ -355,12 +324,6 @@ package VSEGame
 			mShowPosX.text = 'X CollsionBox = '+ (mGameLoader.mBBPlayer.GetPosition().x).toFixed(0);
 			mShowPosZ.text = 'Z CollsionBox = '+ (mGameLoader.mBBPlayer.GetPosition().y).toFixed(0);
 			
-			//mTimer.text = 'Time = '+ (speed/60).toFixed(0);
-			
-			//trace('X', mTruckContainer.x);
-			//trace('Y', mTruckContainer.y);
-			//trace('Z', mTruckContainer.z);
-			
 			
 			mCamera.lookAt(mTruckContainer.position);
 			mCamera.x = mTruckContainer.x - ((5) * Math.sin(mTruckContainer.rotationY * Math.PI / 180));
@@ -384,7 +347,7 @@ package VSEGame
 			
 			if (mKeyForward) 
 			{  
-				if(speed < 40)
+				if(speed < 80)
 				{
 					speed++;
 				}
@@ -395,7 +358,7 @@ package VSEGame
 			}  
 			if (mKeyReverse) 
 			{  
-				if(speed > -20)
+				if(speed > -40)
 				{
 					speed--;
 				}
