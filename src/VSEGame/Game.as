@@ -1,5 +1,10 @@
 package VSEGame
 {
+	import Box2D.Collision.Shapes.*;
+	import Box2D.Collision.b2AABB;
+	import Box2D.Common.Math.*;
+	import Box2D.Dynamics.*;
+	
 	import away3d.animators.*;
 	import away3d.cameras.*;
 	import away3d.containers.*;
@@ -50,18 +55,14 @@ package VSEGame
 		
 		private var topSpeed:Number = 0;
 		private var topSteer:Number = 0;
-		private var speed:Number = 0;
+		private var speed:Number = 10;
 		private var steer:Number = 0;
 		
-		private var keyRight:Boolean = false;
-		private var keyLeft:Boolean = false;
-		private var keyForward:Boolean = false;
-		private var keyReverse:Boolean = false;
-		
-		private var keyRightPressed:Boolean = false;
-		private var keyLeftPressed:Boolean = false;
-		private var keyForwardPressed:Boolean = false;
-		private var keyReversePressed:Boolean = false;
+		private var mKeyRight:Boolean = false;
+		private var mKeyLeft:Boolean = false;
+		private var mKeyForward:Boolean = false;
+		private var mKeyReverse:Boolean = false;
+		private var mKeySpace:Boolean = false;
 		
 		private var keyPressed:Boolean = false;
 		
@@ -73,6 +74,9 @@ package VSEGame
 		public var mShowPosZ:TextField;
 		
 		public var mTimer:TextField;
+		
+		public var mPlayerCubeTest:Cube = new Cube();
+		public var mBuildingCubeTest:Cube = new Cube();
 		
 		public function Game()
 		{
@@ -94,12 +98,13 @@ package VSEGame
 			
 			Init();
 			
-			addEventListener(Event.ADDED_TO_STAGE, GameCreate);
-			addEventListener(Event.REMOVED_FROM_STAGE, GameDestroy);
+			addEventListener(Event.ADDED_TO_STAGE, GameCreate, false, 0, true);
+			addEventListener(Event.REMOVED_FROM_STAGE, GameDestroy, false, 0, true);
 		}
 		
 		public function Init() : void
 		{
+			
 			mTruckContainer.addChild(mGameLoader.mPlayerLoader);
 			mLevelContainer.addChild(mGameLoader.mLevelLoader);
 			
@@ -111,6 +116,9 @@ package VSEGame
 			mScene.addChild(mTruckContainer);
 			mScene.addChild(mLevelContainer);
 			
+			mScene.addChild(mPlayerCubeTest);
+			mScene.addChild(mBuildingCubeTest);
+			
 			mScene.addChild(mRedBuildingContainer);
 			mScene.addChild(mBlueBuildingContainer);
 			
@@ -118,13 +126,43 @@ package VSEGame
 			mGameLoader.mPlayerLoader.y = mTruckContainer.y;
 			mGameLoader.mPlayerLoader.z = mTruckContainer.z;
 			
-			//Start pos of the Player.
+			//Start pos of the Player.	
+			mGameLoader.mBBPlayer.SetPosition(new b2Vec2(-150,0));
 			
-			mTruckContainer.x = 316;
+					
+			mTruckContainer.x = mGameLoader.mBBPlayer.GetPosition().x;
 			mTruckContainer.y = 0;
-			mTruckContainer.z = -278;
-			mTruckContainer.rotationY = 0;
-			mTruckContainer.scale(2);
+			mTruckContainer.z = mGameLoader.mBBPlayer.GetPosition().y;
+			
+			mPlayerCubeTest.x = mTruckContainer.x;
+			mPlayerCubeTest.y = mTruckContainer.y;
+			mPlayerCubeTest.z = mTruckContainer.z;
+			
+			mPlayerCubeTest.width = mGameLoader.mPlayerRec.width;
+			mPlayerCubeTest.height = 1;
+			mPlayerCubeTest.depth = mGameLoader.mPlayerRec.height;
+			
+			
+			
+			mBuildingCubeTest.x = mGameLoader.mBBBlueBuilding.GetPosition().x;
+			mBuildingCubeTest.y = 0;
+			mBuildingCubeTest.z = mGameLoader.mBBBlueBuilding.GetPosition().y;
+			
+			mBuildingCubeTest.width = mGameLoader.mBlueBuildingRec.width;
+			mBuildingCubeTest.height = 1;
+			mBuildingCubeTest.depth = mGameLoader.mBlueBuildingRec.height;
+			
+			
+			var TestCubeMaterial:ShadingColorMaterial = new ShadingColorMaterial();   
+			TestCubeMaterial.ambient = 0xFF9900;   
+			TestCubeMaterial.diffuse = 0xFF9900;   
+			TestCubeMaterial.specular = 0xFF9900;  
+			
+			mPlayerCubeTest.material = TestCubeMaterial;
+			mBuildingCubeTest.material = TestCubeMaterial;
+			
+			//mTruckContainer.rotationY = 0;
+			
 			
 			//Pos of buildings.
 			
@@ -138,7 +176,8 @@ package VSEGame
 			mBlueBuildingContainer.y = 0;
 			mBlueBuildingContainer.z = 0;
 			
-			mLevelContainer.scale(2);
+			mTruckContainer.scale(1);
+			mLevelContainer.scale(1);
 			
 			MakeHUD();
 		}
@@ -178,9 +217,44 @@ package VSEGame
 		
 		private function HandlePlayer() : void
 		{
+			//mTruckContainer.x += (speed * Math.sin(mTruckContainer.rotationY*(Math.PI/180)));
+			//mTruckContainer.z += (speed * Math.cos(mTruckContainer.rotationY*(Math.PI/180)));
 			
-			mTruckContainer.x += (speed * Math.sin(mTruckContainer.rotationY*(Math.PI/180)));
-			mTruckContainer.z += (speed * Math.cos(mTruckContainer.rotationY*(Math.PI/180)));
+			//mGameLoader.mPlayerRec.x = mTruckContainer.x;
+			//mGameLoader.mPlayerRec.y = mTruckContainer.z;
+			//mGameLoader.mBBPlayer.SetAngle(mTruckContainer.rotationY);
+			
+			mTruckContainer.rotationY = mGameLoader.mBBPlayer.GetAngle() * (180/Math.PI) + 90;
+			
+			mTruckContainer.x = mGameLoader.mBBPlayer.GetPosition().x;
+			//mTruckContainer.y = mGameLoader.mBBPlayer.GetPosition().y;
+			mTruckContainer.z = mGameLoader.mBBPlayer.GetPosition().y;
+			
+			mRedBuildingContainer.x = mGameLoader.mBBRedBuilding.GetPosition().x
+			mRedBuildingContainer.z = mGameLoader.mBBRedBuilding.GetPosition().y
+				
+			mBlueBuildingContainer.x = mGameLoader.mBBBlueBuilding.GetPosition().x
+			mBlueBuildingContainer.z = mGameLoader.mBBBlueBuilding.GetPosition().y
+				
+			/*mGameLoader.mRedBuildingRec.x = mRedBuildingContainer.x;
+			mGameLoader.mRedBuildingRec.y = mRedBuildingContainer.z;
+			
+			mGameLoader.mBlueBuildingRec.x = mBlueBuildingContainer.x;
+			mGameLoader.mBlueBuildingRec.y = mBlueBuildingContainer.z;*/
+			
+			//////////////////////////////////////////////////
+			//Test Code
+			//////////////////////////////////////////////////
+			
+			mPlayerCubeTest.x = mTruckContainer.x;
+			mPlayerCubeTest.y = mTruckContainer.y;
+			mPlayerCubeTest.z = mTruckContainer.z;
+			
+
+			
+			mBuildingCubeTest.x = mGameLoader.mBBBlueBuilding.GetPosition().x;
+			mBuildingCubeTest.y = 0;
+			mBuildingCubeTest.z = mGameLoader.mBBBlueBuilding.GetPosition().y;
 			
 			//////////////////////////////////////////////////
 			//Stopping Code.
@@ -206,171 +280,166 @@ package VSEGame
 			//////////////////////////////////////////////////
 			//At this way the truck will stop.
 			
-			if (keyPressed == false)
+			/*if (keyPressed == false)
 			{
 				if (speed > -0.4 && speed < 0.4)
 				{
 					speed = 0;	
 				}
-			}
+			}*/
 		}
 		
 		private function mKeyDownHandler(ev : KeyboardEvent) : void
 		{
-			
-			if (ev.keyCode == Keyboard.UP)
-			{
-				keyForwardPressed = true;
-				keyPressed = true;
-				
-				if(speed < 0)speed += 0.5;
-				if (speed < 25){speed += 0.1;}
-			}
-			
-			if (ev.keyCode == Keyboard.DOWN)
-			{
-				keyReversePressed = true;
-				keyPressed = true;
-				
-				if(speed > 0)speed -= 0.3;
-				if(speed > -12)speed -= 0.1;
-			}
-			
-			if (ev.keyCode == Keyboard.LEFT)
-			{
-				keyLeftPressed = true;
-				
-				if (speed!=0)mTruckContainer.rotationY -= 2;
-			}
-			
-			if (ev.keyCode == Keyboard.RIGHT)
-			{
-				keyRightPressed = true;
-				
-				if (speed!=0)mTruckContainer.rotationY += 2;
-			}
-			
-			if ( ev.keyCode == Keyboard.SPACE)
-			{
-				if(speed < 0)speed += 0.5;
-				if(speed > 0)speed -= 0.5;
-			}
+			//trace('huygjhk');
+			switch (ev.keyCode) 
+			{  
+				case 38:  
+					//trace('U There?');
+					//UP KEY is up  
+					mKeyForward = true;  
+					break;  
+				case 39:  
+					//RIGHT KEY is up  
+					mKeyRight = true;  
+					break;  
+				case 37:  
+					//LEFT Key is up  
+					mKeyLeft = true;  
+					break;  
+				case 40:  
+					//DOWN KEY is up  
+					mKeyReverse = true;  
+					break;  
+				case 32:
+					mKeySpace = true;
+					break;
+			}  
 		}
 		
 		private function mKeyUpHandler(ev : KeyboardEvent) : void
 		{
-			if (keyForwardPressed == true)
-			{
-				keyForwardPressed = false;
-			}
-			
-			if (keyReversePressed == true)
-			{
-				keyReversePressed = false;
-			}
-			
-			if (keyLeftPressed == true)
-			{
-				keyLeftPressed = false;
-			}
-			
-			if (keyRightPressed == true)
-			{
-				keyRightPressed = false;
-			}
-			
-			keyPressed = false;
+			switch (ev.keyCode) 
+			{  
+				case 38:  
+					//UP KEY is up  
+					mKeyForward = false;  
+					break;  
+				case 39:  
+					//RIGHT KEY is up  
+					mKeyRight = false;  
+					break;  
+				case 37:  
+					//LEFT Key is up  
+					mKeyLeft = false;  
+					break;  
+				case 40:  
+					//DOWN KEY is up  
+					mKeyReverse = false;  
+					break;  
+				case 32:
+					mKeySpace = false;
+					break;
+			}  
 		}
-		
-		//////////////////////////////////////////////////
-		//A try for pressing multiple Buttons.
-		//This Failed :(
-		//////////////////////////////////////////////////
-		
-		/*
-		private function mKeyLeftDownHandler(ev : KeyboardEvent) : void
-		{
-		if (ev.keyCode == Keyboard.LEFT)
-		{
-		keyLeftPressed = true;
-		
-		if (speed!=0)mTruckContainer.rotationY -= 2;
-		}
-		}
-		
-		private function mKeyRightDownHandler(ev : KeyboardEvent) : void
-		{
-		if (ev.keyCode == Keyboard.RIGHT)
-		{
-		keyRightPressed = true;
-		
-		if (speed!=0)mTruckContainer.rotationY += 2;
-		}
-		}
-		
-		private function mKeyLeftUpHandler(ev : KeyboardEvent) : void
-		{
-		
-		if (keyLeftPressed == true)
-		{
-		keyLeftPressed = false;
-		}
-		
-		keyPressed = false;
-		}
-		
-		private function mKeyRightUpHandler(ev : KeyboardEvent) : void
-		{
-		if (keyRightPressed == true)
-		{
-		keyRightPressed = false;
-		}
-		
-		keyPressed = false;
-		}
-		
-		private function mKeyUpHandler(ev : KeyboardEvent) : void
-		{
-		if (keyForwardPressed == true)
-		{
-		keyForwardPressed = false;
-		}
-		
-		if (keyReversePressed == true)
-		{
-		keyReversePressed = false;
-		}			
-		keyPressed = false;
-		}*/
-		
-		//////////////////////////////////////////////////
-		//A try for pressing multiple Buttons.
-		//This Failed :(
-		//////////////////////////////////////////////////
 		
 		protected function onEnterFrame(ev:Event) : void
 		{			
-			mSpeedMeter.text = 'Speed Meter = '+ (speed*10).toFixed(0);
+			mGameLoader.mWorld.Step(1/30,10,10);
 			
-			mShowPosX.text = 'X = '+ (mTruckContainer.x).toFixed(0);
-			mShowPosZ.text = 'Z = '+ (mTruckContainer.z).toFixed(0);
-			
-			mTimer.text = 'Time = '+ (speed/60).toFixed(0);
-			
-			trace('X', mTruckContainer.x);
-			trace('Y', mTruckContainer.y);
-			trace('Z', mTruckContainer.z);
-
+			updateBody();
 			HandlePlayer();
+			
+			mSpeedMeter.text = 'Speed Meter = '+ (speed).toFixed(0);
+			
+			mShowPosX.text = 'X CollsionBox = '+ (mGameLoader.mBBPlayer.GetPosition().x).toFixed(0);
+			mShowPosZ.text = 'Z CollsionBox = '+ (mGameLoader.mBBPlayer.GetPosition().y).toFixed(0);
+			
+			//mTimer.text = 'Time = '+ (speed/60).toFixed(0);
+			
+			//trace('X', mTruckContainer.x);
+			//trace('Y', mTruckContainer.y);
+			//trace('Z', mTruckContainer.z);
+			
 			
 			mCamera.lookAt(mTruckContainer.position);
 			mCamera.x = mTruckContainer.x - ((5) * Math.sin(mTruckContainer.rotationY * Math.PI / 180));
 			mCamera.z = mTruckContainer.z - ((5) * Math.cos(mTruckContainer.rotationY * Math.PI / 180));
-			mCamera.y = 1.5;
+			mCamera.y = 1;
 			
 			mView.render();
 			
 		}
+		
+		private function updateBody ():void 
+		{
+			mGameLoader.mBBPlayer.SetLinearVelocity(new b2Vec2(0,0));  
+			
+			
+			if (mKeyLeft && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() - 0.025);  
+			if (mKeyRight && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() + 0.025);  
+			
+			var angle:Number = mGameLoader.mBBPlayer.GetAngle() - Math.PI/2;  
+			var playerVelocity:b2Vec2 = mGameLoader.mBBPlayer.GetLinearVelocity();  
+			
+			if (mKeyForward) 
+			{  
+				if(speed < 40)
+				{
+					speed++;
+				}
+				
+				playerVelocity.x -= speed*Math.sin(angle);
+				playerVelocity.y -= speed*Math.cos(angle);
+				
+			}  
+			if (mKeyReverse) 
+			{  
+				if(speed > -20)
+				{
+					speed--;
+				}
+				playerVelocity.x -= speed*Math.sin(angle);
+				playerVelocity.y -= speed*Math.cos(angle);
+			}  		
+			
+			if(mKeySpace)
+			{
+				if(speed > 0.01)
+				{
+					speed -= 3;
+				}
+				
+				if(speed < -0.01)
+				{
+					speed += 3;
+				}
+			}
+			
+			if(!mKeyReverse && !mKeyForward)
+			{
+				if(speed > 0)
+				{
+					speed -= 0.5;
+					
+					playerVelocity.x -= speed*Math.sin(angle);  
+					playerVelocity.y -= speed*Math.cos(angle);  
+				}
+				
+				if(speed < 0)
+				{
+					speed += 0.5;
+					
+					playerVelocity.x -= speed*Math.sin(angle);  
+					playerVelocity.y -= speed*Math.cos(angle);  
+				}
+				
+				if(speed > -3 && speed < 3)
+				{
+				speed = 0;
+				}
+			}
+		}  
 		
 		public function GameDestroy(ev : Event) : void
 		{

@@ -1,5 +1,10 @@
 package VSEGame
 {
+	import Box2D.Collision.Shapes.*;
+	import Box2D.Collision.b2AABB;
+	import Box2D.Common.Math.*;
+	import Box2D.Dynamics.*;
+	
 	import away3d.animators.*;
 	import away3d.cameras.*;
 	import away3d.containers.*;
@@ -21,6 +26,7 @@ package VSEGame
 	import flash.display.*;
 	import flash.events.*;
 	import flash.external.ExternalInterface;
+	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
 	import flash.utils.*;
 	
@@ -28,46 +34,117 @@ package VSEGame
 	
 	public class GameLoader extends Sprite
 	{
+		public var mLevelMax3DS:Max3DS;
+		public var mLevelLoader:LoaderCube;
+		public var mLevelModel:ObjectContainer3D;
 		
-		////////////////////////////////////////////////////////////
-		// This code is not needed for the import of a 3DS file.
-		////////////////////////////////////////////////////////////
+		public var mWorld:b2World;
 		
-		//[Embed(source="data/Truck.png")]
-		//private var TruckBitmap:Class;
-
-		//[Embed (source="data/Level/Road_100M_Texture.png")] private var RoadBitmap:Class;
-		//public var mLevelTexture:BitmapMaterial;
-		
-		////////////////////////////////////////////////////////////
-		
-		
-		
-		//public var mTruck:Object3D = Obj.load("data/Truck.obj",{material:TruckBitmap,scaling:1,screenZOffset: 10, bothsides: false});
-		
-		//public var mLevel:Object3D = Obj.load("data/Level_Test3.obj", {material:RoadBitmap, scaling:1,x:0,y:0,z:0,rotationX:0,rotationY:0,rotationZ:0, bothsides: true});
 		
 		public var mPlayerMax3DS:Max3DS;
 		public var mPlayerLoader:LoaderCube;
 		public var mPlayerModel:ObjectContainer3D;
+	
+		public var mBBPlayer:b2Body;
 		
-		public var mLevelMax3DS:Max3DS;
-		public var mLevelLoader:LoaderCube;
-		public var mLevelModel:ObjectContainer3D;
 		
 		public var mRedBuildingMax3DS:Max3DS;
 		public var mRedBuildingLoader:LoaderCube;
 		public var mRedBuildingModel:ObjectContainer3D;
 		
+		public var mBBRedBuilding:b2Body;
+		
+		
 		public var mBlueBuildingMax3DS:Max3DS;
 		public var mBlueBuildingLoader:LoaderCube;
 		public var mBlueBuildingModel:ObjectContainer3D;
 		
+		public var mBBBlueBuilding:b2Body;
+		
+		public var mPlayerRec:Rectangle = new Rectangle(316,-278,5,7);
+		
+		public var mRedBuildingRec:Rectangle = new Rectangle(100,0,44,38);
+		public var mBlueBuildingRec:Rectangle = new Rectangle(-100,0,44,38);
+		
 		public function GameLoader()
-		{
+		{			
+			LoadWorld();
+			CreateWorld();
+			
 			LoadPlayer();
-			LoadLevel();
 		}
+		
+		public function CreateWorld() : void
+		{
+			mWorld = new b2World(new b2Vec2(0,0), true);
+			
+			var bodyDef:b2BodyDef = CreateBoxDef(mPlayerRec);
+			bodyDef.type = b2Body.b2_dynamicBody;
+			bodyDef.allowSleep = false;
+			var bodyFixture:b2FixtureDef = CreateBoxFixture(mPlayerRec);
+			
+			mBBPlayer = mWorld.CreateBody(bodyDef);
+			mBBPlayer.CreateFixture(bodyFixture);	
+			
+			
+			var data:Object = {};  
+			data.type = "block";  
+			
+			//Red Building
+			bodyDef = CreateBoxDef(mRedBuildingRec);
+			bodyDef.type = b2Body.b2_dynamicBody;
+			bodyDef.linearDamping = 20;
+			bodyFixture = CreateBoxFixture(mRedBuildingRec);
+			bodyFixture.density = 0.5;
+			bodyFixture.friction = 1;
+			
+			mBBRedBuilding = mWorld.CreateBody(bodyDef);
+			mBBRedBuilding.CreateFixture(bodyFixture);
+			mBBRedBuilding.SetUserData(data);
+			
+			
+			//Blue Building
+			bodyDef = CreateBoxDef(mBlueBuildingRec);
+			bodyDef.type = b2Body.b2_dynamicBody;
+			bodyDef.linearDamping = 20;
+			bodyFixture = CreateBoxFixture(mBlueBuildingRec);
+			bodyFixture.density = 10;
+			bodyFixture.friction = 1;
+			
+			mBBBlueBuilding = mWorld.CreateBody(bodyDef);
+			mBBBlueBuilding.CreateFixture(bodyFixture);
+			mBBBlueBuilding.SetUserData(data);
+		}
+
+		private function CreateBoxDef(rec:Rectangle) : b2BodyDef
+		{
+			var bodyDef:b2BodyDef = new b2BodyDef();
+			bodyDef.position.Set(p2m(rec.x + rec.width/2), p2m(rec.y + rec.height/2));
+			bodyDef.type = b2Body.b2_staticBody;
+			bodyDef.angularDamping = 10;
+			return bodyDef;
+		}
+		
+		private function p2m(pixel:Number):Number {  
+			return pixel;  
+		}  
+		
+		private function m2p(m:Number):Number {  
+			return m * 30;  
+		}  
+		
+		private function CreateBoxFixture(rec:Rectangle) : b2FixtureDef
+		{
+			var bodyShape:b2PolygonShape = new b2PolygonShape();
+			bodyShape.SetAsBox (p2m(rec.width/2), p2m(rec.height/2));
+			var bodyFixture:b2FixtureDef = new b2FixtureDef();
+			bodyFixture.shape = bodyShape;
+			bodyFixture.density = 1;
+			bodyFixture.restitution = 0;
+			return bodyFixture;
+		}      
+		
+		
 		
 		public function LoadPlayer() : void
 		{
@@ -82,7 +159,7 @@ package VSEGame
 			mPlayerLoader.screenZOffset = 10;
 		}
 		
-		public function LoadLevel() : void
+		public function LoadWorld() : void
 		{
 			////////////////////////////////////////////////////////////
 			// This code is for the Level.
@@ -144,7 +221,6 @@ package VSEGame
 		{
 			mBlueBuildingModel = mBlueBuildingLoader.handle as ObjectContainer3D;
 			mBlueBuildingModel.rotationX = 90;
-		}
-
+		}   
 	}
 }
