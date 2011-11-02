@@ -9,12 +9,15 @@ package VSEGame
 	import away3d.cameras.*;
 	import away3d.containers.*;
 	import away3d.core.base.*;
+	import away3d.core.clip.FrustumClipping;
+	import away3d.core.clip.NearfieldClipping;
 	import away3d.core.clip.RectangleClipping;
+	import away3d.core.filter.ZSortFilter;
 	import away3d.core.math.*;
 	import away3d.core.render.Renderer;
 	import away3d.core.utils.*;
 	import away3d.events.*;
-	import away3d.lights.*;  
+	import away3d.lights.*;
 	import away3d.loaders.*;
 	import away3d.loaders.Ase;
 	import away3d.loaders.Collada;
@@ -29,6 +32,7 @@ package VSEGame
 	import flash.events.*;
 	import flash.external.ExternalInterface;
 	import flash.text.TextField;
+	import flash.text.engine.RenderingMode;
 	import flash.ui.Keyboard;
 	import flash.utils.*;
 	
@@ -41,8 +45,6 @@ package VSEGame
 		public var mView : View3D;
 		public var mScene:Scene3D;
 		public var mCamera:Camera3D;
-		
-		
 		
 		////////////////////////////////////////////////////////////
 		//These are the model holders.
@@ -79,8 +81,8 @@ package VSEGame
 		////////////////////////////////////////////////////////////
 		//These are for Test Collision Cubes.
 		
-		public var mPlayerCubeTest:Cube = new Cube();
-		public var mBuildingCubeTest:Cube = new Cube();
+		//public var mPlayerCubeTest:Cube = new Cube();
+		//public var mBuildingCubeTest:Cube = new Cube();
 		
 		
 		public function Game()
@@ -103,7 +105,8 @@ package VSEGame
 			mView = new View3D({x:320, y:360});
 			addChild(mView);
 			
-			mView.clipping = new RectangleClipping( { minX:-320, maxX:320, minY:-480, maxY:480 } );
+			//mView.clipping = new NearfieldClipping({minZ:2});
+			mView.clipping = new RectangleClipping( { minX:-320, maxX:320, minY:-480, maxY:480, minZ:10 } );
 			
 			mScene = mView.scene;
 			mCamera = mView.camera;
@@ -119,6 +122,7 @@ package VSEGame
 			
 			mTruckContainer.addChild(mGameLoader.mPlayerLoader);
 			mLevelContainer.addChild(mGameLoader.mLevelLoader);
+
 			
 			mRedBuildingContainer.addChild(mGameLoader.mRedBuildingLoader);
 			mBlueBuildingContainer.addChild(mGameLoader.mBlueBuildingLoader);
@@ -128,14 +132,24 @@ package VSEGame
 			mScene.addChild(mTruckContainer);
 			mScene.addChild(mLevelContainer);
 			
-			mScene.addChild(mPlayerCubeTest);
-			mScene.addChild(mBuildingCubeTest);
+			mTruckContainer.pushfront = true;
+			mLevelContainer.pushback = true;
+			mRedBuildingContainer.pushback = true;
+			mBlueBuildingContainer.pushback = true;
 			
-			mScene.addChild(mGameLoader.TestBorderCube);
-			mScene.addChild(mGameLoader.TestBorder2Cube);
-			mScene.addChild(mGameLoader.TestBorder3Cube);
-			mScene.addChild(mGameLoader.TestBorder4Cube);
-			mScene.addChild(mGameLoader.pillar);
+			mTruckContainer.ownCanvas = true;
+			mLevelContainer.ownCanvas = true;
+			mRedBuildingContainer.ownCanvas = true;
+			mBlueBuildingContainer.ownCanvas = true;
+			
+			//mScene.addChild(mPlayerCubeTest);
+			//mScene.addChild(mBuildingCubeTest);
+			
+			//mScene.addChild(mGameLoader.TestBorderCube);
+			//mScene.addChild(mGameLoader.TestBorder2Cube);
+			//mScene.addChild(mGameLoader.TestBorder3Cube);
+			//mScene.addChild(mGameLoader.TestBorder4Cube);
+			//mScene.addChild(mGameLoader.pillar);
 			
 			mScene.addChild(mRedBuildingContainer);
 			mScene.addChild(mBlueBuildingContainer);
@@ -153,7 +167,7 @@ package VSEGame
 			mTruckContainer.y = 0;
 			mTruckContainer.z = mGameLoader.mBBPlayer.GetPosition().y;
 			
-			mPlayerCubeTest.x = mTruckContainer.x;
+			/*mPlayerCubeTest.x = mTruckContainer.x;
 			mPlayerCubeTest.y = mTruckContainer.y;
 			mPlayerCubeTest.z = mTruckContainer.z;
 			
@@ -178,9 +192,7 @@ package VSEGame
 			TestCubeMaterial.specular = 0xFF9900;  
 			
 			mPlayerCubeTest.material = TestCubeMaterial;
-			mBuildingCubeTest.material = TestCubeMaterial;
-			
-			//mTruckContainer.rotationY = 0;
+			mBuildingCubeTest.material = TestCubeMaterial;*/
 			
 			
 			//Pos of buildings.
@@ -247,15 +259,13 @@ package VSEGame
 			mBlueBuildingContainer.x = mGameLoader.mBBBlueBuilding.GetPosition().x
 			mBlueBuildingContainer.z = mGameLoader.mBBBlueBuilding.GetPosition().y
 			
-			mPlayerCubeTest.x = mTruckContainer.x;
+			/*mPlayerCubeTest.x = mTruckContainer.x;
 			mPlayerCubeTest.y = mTruckContainer.y;
 			mPlayerCubeTest.z = mTruckContainer.z;
 			
-
-			
 			mBuildingCubeTest.x = mGameLoader.mBBBlueBuilding.GetPosition().x;
 			mBuildingCubeTest.y = 0;
-			mBuildingCubeTest.z = mGameLoader.mBBBlueBuilding.GetPosition().y;
+			mBuildingCubeTest.z = mGameLoader.mBBBlueBuilding.GetPosition().y;*/
 		}
 		
 		private function mKeyDownHandler(ev : KeyboardEvent) : void
@@ -276,10 +286,10 @@ package VSEGame
 					//LEFT Key is up  
 					mKeyLeft = true;  
 					break;  
-				case 40:  
-					//DOWN KEY is up  
-					mKeyReverse = true;  
-					break;  
+				case 40:
+					//DOWN KEY is up
+					mKeyReverse = true;
+					break;
 				case 32:
 					mKeySpace = true;
 					break;
@@ -326,26 +336,26 @@ package VSEGame
 			
 			
 			mCamera.lookAt(mTruckContainer.position);
-			mCamera.x = mTruckContainer.x - ((5) * Math.sin(mTruckContainer.rotationY * Math.PI / 180));
-			mCamera.z = mTruckContainer.z - ((5) * Math.cos(mTruckContainer.rotationY * Math.PI / 180));
-			mCamera.y = 1;
+			mCamera.x = mTruckContainer.x - ((3) * Math.sin(mTruckContainer.rotationY * Math.PI / 180));
+			mCamera.z = mTruckContainer.z - ((3) * Math.cos(mTruckContainer.rotationY * Math.PI / 180));
+			mCamera.y = 0.75;
+			mCamera.zoom = 13;
 			
 			mView.render();
-			
 		}
 		
 		private function updateBody ():void 
 		{
-			mGameLoader.mBBPlayer.SetLinearVelocity(new b2Vec2(0,0));  
+			mGameLoader.mBBPlayer.SetLinearVelocity(new b2Vec2(0,0));
 			
 			
-			if (mKeyLeft && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() - 0.025);  
-			if (mKeyRight && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() + 0.025);  
+			if (mKeyLeft && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() - 0.025);
+			if (mKeyRight && (speed > 3 || speed < -3)) mGameLoader.mBBPlayer.SetAngle(mGameLoader.mBBPlayer.GetAngle() + 0.025);
 			
-			var angle:Number = mGameLoader.mBBPlayer.GetAngle() - Math.PI/2;  
-			var playerVelocity:b2Vec2 = mGameLoader.mBBPlayer.GetLinearVelocity();  
+			var angle:Number = mGameLoader.mBBPlayer.GetAngle() - Math.PI/2;
+			var playerVelocity:b2Vec2 = mGameLoader.mBBPlayer.GetLinearVelocity();
 			
-			if (mKeyForward) 
+			if (mKeyForward)
 			{  
 				if(speed < 80)
 				{
@@ -356,7 +366,7 @@ package VSEGame
 				playerVelocity.y -= speed*Math.cos(angle);
 				
 			}  
-			if (mKeyReverse) 
+			if (mKeyReverse)
 			{  
 				if(speed > -40)
 				{
@@ -385,8 +395,8 @@ package VSEGame
 				{
 					speed -= 0.5;
 					
-					playerVelocity.x -= speed*Math.sin(angle);  
-					playerVelocity.y -= speed*Math.cos(angle);  
+					playerVelocity.x -= speed*Math.sin(angle);
+					playerVelocity.y -= speed*Math.cos(angle);
 				}
 				
 				if(speed < 0)
@@ -424,18 +434,6 @@ package VSEGame
 			stage.addEventListener(KeyboardEvent.KEY_UP, mKeyUpHandler);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			
-			
-			//////////////////////////////////////////////////
-			//A try for pressing multiple Buttons.
-			//This Failed.
-			//////////////////////////////////////////////////
-			
-			/*stage.addEventListener(KeyboardEvent.KEY_DOWN, mKeyLeftDownHandler);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, mKeyRightDownHandler);
-			
-			stage.addEventListener(KeyboardEvent.KEY_UP, mKeyLeftUpHandler);
-			stage.addEventListener(KeyboardEvent.KEY_UP, mKeyRightUpHandler);*/
 		}
 	}
 }

@@ -77,7 +77,7 @@ package VSEGame
 		////////////////////////////////////////////////////////////
 		//These are the Collision Rectangles.
 		
-		public var mPlayerRec:Rectangle = new Rectangle(316,-278,5,7);
+		public var mPlayerRec:Rectangle = new Rectangle(316,-278,5,5);
 		
 		public var mRedBuildingRec:Rectangle = new Rectangle(100,0,44,38);
 		public var mBlueBuildingRec:Rectangle = new Rectangle(-100,0,44,38);
@@ -90,12 +90,12 @@ package VSEGame
 		////////////////////////////////////////////////////////////
 		//These are the Test Border Cubes
 		
-		public var TestBorderCube:Cube = new Cube();
-		public var TestBorder2Cube:Cube = new Cube();
-		public var TestBorder3Cube:Cube = new Cube();
-		public var TestBorder4Cube:Cube = new Cube();
+		//public var TestBorderCube:Cube = new Cube();
+		//public var TestBorder2Cube:Cube = new Cube();
+		//public var TestBorder3Cube:Cube = new Cube();
+		//public var TestBorder4Cube:Cube = new Cube();
 		
-		public var pillar:Cylinder = new Cylinder({radius:10, height: 60});  
+		//public var pillar:Cylinder = new Cylinder({radius:8, height: 60});  
 		
 		public function GameLoader()
 		{			
@@ -123,8 +123,8 @@ package VSEGame
 			////////////////////////////////////////////////////////////
 			//This is for Creating a "Name" for the Collision object.
 			
-			var data:Object = {};  
-			data.type = "Building";  
+			var data:Object = {};
+			data.type = "Building";
 			
 			////////////////////////////////////////////////////////////
 			//Red Building.
@@ -155,23 +155,23 @@ package VSEGame
 			////////////////////////////////////////////////////////////
 			//The Roundabout.
 			
-			bodyDef = new b2BodyDef();  
-			bodyDef.position.Set(p2m(150), p2m(150));  
-			bodyDef.type = b2Body.b2_staticBody;  
-			var bodyShape:b2CircleShape = new b2CircleShape();  
-			bodyShape.SetRadius (p2m(10));  
-			bodyFixture = new b2FixtureDef();  
-			bodyFixture.shape = bodyShape;  
-			bodyFixture.density = 1;  
+			bodyDef = new b2BodyDef();
+			bodyDef.position.Set(p2m(163), p2m(154));
+			bodyDef.type = b2Body.b2_staticBody;
+			var bodyShape:b2CircleShape = new b2CircleShape();
+			bodyShape.SetRadius (p2m(8));
+			bodyFixture = new b2FixtureDef();
+			bodyFixture.shape = bodyShape;
+			bodyFixture.density = 1;
 			
 			var Roundabout:b2Body = mWorld.CreateBody(bodyDef);  
 			Roundabout.CreateFixture(bodyFixture);  
 			Roundabout.SetUserData(data);  
 			
-			pillar.rotationX = 0;
-			pillar.z = 150;  
-			pillar.x = 150;  
-			pillar.y = 0;  
+			/*pillar.rotationX = 0;
+			pillar.z = 154;
+			pillar.x = 163;
+			pillar.y = 0;*/
 						
 			////////////////////////////////////////////////////////////
 			//The Borders.
@@ -230,15 +230,15 @@ package VSEGame
 			////////////////////////////////////////////////////////////
 			//This sets the Position of the Borders.
 			
-			mBBUpWall.SetPosition(new b2Vec2(0,180));
-			mBBDownWall.SetPosition(new b2Vec2(0,-180));
-			mBBLeftWall.SetPosition(new b2Vec2(-180,0));
-			mBBRightWall.SetPosition(new b2Vec2(180,0));
+			mBBUpWall.SetPosition(new b2Vec2(0,200));
+			mBBDownWall.SetPosition(new b2Vec2(0,-200));
+			mBBLeftWall.SetPosition(new b2Vec2(-200,0));
+			mBBRightWall.SetPosition(new b2Vec2(200,0));
 			
 			////////////////////////////////////////////////////////////
 			//The Test Cubes.
 			
-			TestBorderCube.x = mBBUpWall.GetPosition().x;
+			/*TestBorderCube.x = mBBUpWall.GetPosition().x;
 			TestBorderCube.y = 0;
 			TestBorderCube.z = mBBUpWall.GetPosition().y;
 			
@@ -271,7 +271,7 @@ package VSEGame
 			
 			TestBorder4Cube.width = mRightWallRec.width;
 			TestBorder4Cube.height = 10;
-			TestBorder4Cube.depth = mRightWallRec.height;
+			TestBorder4Cube.depth = mRightWallRec.height;*/
 		}
 
 		private function CreateBoxDef(rec:Rectangle) : b2BodyDef

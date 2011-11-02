@@ -7,9 +7,11 @@ package VSEGame
 	import flash.ui.Keyboard;
 	import flash.utils.*;
 	
+	import flashx.textLayout.formats.BackgroundColor;
+	
 	import wumedia.vector.*;
 	
-	[SWF(width="640", height="480", frameRate="60")]
+	[SWF(width="640", height="480", frameRate="60", backgroundColor = "0x00CCFF")]
 	
 	public class Main extends Sprite
 	{
@@ -18,6 +20,7 @@ package VSEGame
 
 		public function Main()
 		{
+			stage.quality = StageQuality.LOW;
 			
 			mGameManage = new GameManage();
 			stage.addChild(mGameManage);
